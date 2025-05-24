@@ -1,21 +1,43 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using P3_Continua.Models;
+using P3_Continua.Services;
 
 namespace P3_Continua.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly JsonPlaceholderService _service;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(JsonPlaceholderService service)
     {
-        _logger = logger;
+        _service = service;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var posts = await _service.GetPostsAsync();
+        return View(posts);
+    }
+    public async Task<IActionResult> Details(int id)
+    {
+        var post = await _service.GetPostAsync(id);
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        var user = await _service.GetUserAsync(post.UserId);
+        var comments = await _service.GetCommentsForPostAsync(id);
+
+        var viewModel = new PostDetailsViewModel
+        {
+            Post = post,
+            User = user ?? new(),
+            Comments = comments
+        };
+
+        return View(viewModel);
     }
 
     public IActionResult Privacy()
