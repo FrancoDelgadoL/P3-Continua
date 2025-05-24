@@ -1,0 +1,40 @@
+@model P3_Continua.Models.PostDetailsViewModel
+
+<h1>@Model.Post.Title</h1>
+<p><strong>Autor:</strong> @Model.User.Name (@Model.User.Email)</p>
+<p>@Model.Post.Body</p>
+
+<div>
+    <button id="likeBtn" onclick="vote('like')">👍 Me gusta (<span id="likeCount">0</span>)</button>
+    <button id="dislikeBtn" onclick="vote('dislike')">👎 No me gusta (<span id="dislikeCount">0</span>)</button>
+</div>
+
+<h3>Comentarios:</h3>
+<ul>
+@foreach (var comment in Model.Comments)
+{
+    <li>
+        <strong>@comment.Name</strong> (<em>@comment.Email</em>)<br />
+        @comment.Body
+    </li>
+}
+</ul>
+
+<a href="/">← Volver a la lista</a>
+
+@section Scripts {
+<script>
+    let likeCount = 0;
+    let dislikeCount = 0;
+
+    function vote(type) {
+        if (type === 'like') {
+            likeCount++;
+            document.getElementById('likeCount').innerText = likeCount;
+        } else if (type === 'dislike') {
+            dislikeCount++;
+            document.getElementById('dislikeCount').innerText = dislikeCount;
+        }
+    }
+</script>
+}
